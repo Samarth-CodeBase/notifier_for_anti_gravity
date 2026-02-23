@@ -78,67 +78,83 @@ root = tk.Tk()
 root.overrideredirect(True)
 root.attributes("-topmost", True)
 
-# Modern UI Colors - High Visibility Alert
-bg_color = "#FF4B4B" # Vibrant red/coral
-fg_color = "#FFFFFF" # White text
-border_color = "#B33030" # Darker red border
+# Premium Dark UI Colors
+bg_color = "#1E1E1E" # Deep Charcoal
+fg_color = "#FFFFFF" # Pure White
+accent_color = "#00D1FF" # Neon Cyan
+border_color = "#333333" # Subtle Border
 
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 
-window_width = 380
-window_height = 90
+window_width = 400
+window_height = 100
 
 x_pos = screen_width - window_width - 30
 y_pos = screen_height - window_height - 70
 
 root.geometry(f"{{window_width}}x{{window_height}}+{{x_pos}}+{{y_pos}}")
-root.configure(bg=border_color) # The root acts as a border
+root.configure(bg=border_color)
 
-# Inner frame for padding
-inner_frame = tk.Frame(root, bg=bg_color, highlightthickness=0)
-# Add a 2px margin around the edges so the root color shows through as a border
-inner_frame.pack(fill="both", expand=True, padx=2, pady=2)
+# Main Container
+container = tk.Frame(root, bg=bg_color, highlightthickness=0)
+container.pack(fill="both", expand=True, padx=1, pady=1)
 
-# Left side indicator stripe (like many modern notifications)
-stripe = tk.Frame(inner_frame, bg="#FFFFFF", width=6)
-stripe.pack(side="left", fill="y")
+# Left Accent Bar (Animated Pulse effect could go here, but keeping it simple for now)
+accent_bar = tk.Frame(container, bg=accent_color, width=4)
+accent_bar.pack(side="left", fill="y")
 
-# Content container
-content = tk.Frame(inner_frame, bg=bg_color)
-content.pack(side="left", fill="both", expand=True, padx=10, pady=10)
+# Content Area
+content = tk.Frame(container, bg=bg_color)
+content.pack(side="left", fill="both", expand=True, padx=20, pady=15)
 
-# Icon (text based since we don't have images guaranteed)
-icon_label = tk.Label(content, text="\u26A0", font=("Segoe UI Emoji", 24), bg=bg_color, fg=fg_color)
-icon_label.pack(side="left", padx=(0,10))
-
-# Text container
+# Text Container
 text_frame = tk.Frame(content, bg=bg_color)
 text_frame.pack(side="left", fill="both", expand=True)
 
-lbl_title = tk.Label(text_frame, text=title.upper(), font=("Segoe UI", 11, "bold"), bg=bg_color, fg=fg_color, anchor="w")
-lbl_title.pack(fill="x", pady=(0, 2))
+lbl_title = tk.Label(
+    text_frame, 
+    text=title.upper(), 
+    font=("Segoe UI", 10, "bold"), 
+    bg=bg_color, 
+    fg=accent_color, 
+    anchor="w"
+)
+lbl_title.pack(fill="x", pady=(0, 4))
 
-lbl_msg = tk.Label(text_frame, text=message, font=("Segoe UI", 10), bg=bg_color, fg="#FFE0E0", anchor="nw", justify="left", wraplength=window_width-90)
+lbl_msg = tk.Label(
+    text_frame, 
+    text=message, 
+    font=("Segoe UI Semilight", 11), 
+    bg=bg_color, 
+    fg="#BBBBBB", 
+    anchor="nw", 
+    justify="left", 
+    wraplength=window_width-80
+)
 lbl_msg.pack(fill="both", expand=True)
 
 current_x = screen_width
 
 def slide_in():
     global current_x
-    if current_x > x_pos:
-        current_x -= 30
-        if current_x < x_pos:
-            current_x = x_pos
+    target_x = x_pos
+    if current_x > target_x:
+        # Exponential smoothing for a "premium" feel
+        dist = current_x - target_x
+        step = max(1, int(dist * 0.2)) # Move 20% of the way each time
+        current_x -= step
         root.geometry(f"{{window_width}}x{{window_height}}+{{current_x}}+{{y_pos}}")
-        root.after(15, slide_in)
+        root.after(10, slide_in)
         
 def slide_out():
     global current_x
     if current_x < screen_width:
-        current_x += 30
+        dist = screen_width - current_x
+        step = max(1, int((screen_width - x_pos + 10) * 0.15))
+        current_x += step
         root.geometry(f"{{window_width}}x{{window_height}}+{{current_x}}+{{y_pos}}")
-        root.after(15, slide_out)
+        root.after(10, slide_out)
     else:
         root.destroy()
         try:
