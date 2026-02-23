@@ -1,0 +1,26 @@
+attention_alert:
+  enabled: true
+  cooldown_seconds: 10
+  stall_timeout_seconds: 30
+  backends:
+    audio:
+      enabled: true
+    desktop:
+      enabled: true
+    webhook:
+      enabled: false
+      url: "https://hooks.example.com/agent-alert"
+      secret: "${ALERT_WEBHOOK_SECRET}"
+  escalation:
+    - delay_seconds: 0
+      backend: audio
+    - delay_seconds: 30
+      backend: desktop
+    - delay_seconds: 120
+      backend: webhook
+    - delay_seconds: 600
+      action: auto_pause
+  history:
+    enabled: true
+    db_path: "notifications.db"
+    retention_days: 30
