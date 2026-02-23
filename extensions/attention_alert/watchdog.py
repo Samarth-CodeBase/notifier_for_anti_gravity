@@ -1,20 +1,18 @@
 import threading
 import time
 import logging
-from .models import AgentEvent
-from .event_bus import get_global_bus
 
 logger = logging.getLogger(__name__)
 
 class ExecutionWatchdog:
-    """Monitors the execution thread and fires a stall event if no heartbeat is received."""
+    """Monitors the execution thread and calls a callback if no heartbeat is received."""
 
-    def __init__(self, timeout_seconds: int = 30):
+    def __init__(self, timeout_seconds: int = 30, on_stall_callback = None):
         self._timeout = timeout_seconds
+        self._on_stall_callback = on_stall_callback
         self._last_heartbeat = time.monotonic()
         self._stop_event = threading.Event()
         self._thread = None
-        self._bus = get_global_bus()
         self._stalled = False
 
     def start(self):
@@ -35,20 +33,13 @@ class ExecutionWatchdog:
             self._thread = None
 
     def heartbeat(self):
-        """Reset the stall timer. Must be called repeatedly by the main execution loop."""
+        """Reset the stall timer. Must be called repeatedly by the agent."""
         self._last_heartbeat = time.monotonic()
         
         # If we were previously stalled and just got a heartbeat, we've recovered
         if self._stalled:
             self._stalled = False
             logger.info("Watchdog detected execution recovery.")
-            # Emit recovery event if needed, but for now we just log it
-            self._bus.publish(AgentEvent(
-                type="execution_running",
-                source="watchdog",
-                payload={},
-                severity="info"
-            ))
 
     def _watch(self):
         """Background loop that checks for heartbeats."""
@@ -60,12 +51,11 @@ class ExecutionWatchdog:
             if elapsed > self._timeout and not self._stalled:
                 self._stalled = True
                 logger.warning(f"Execution stalled! No heartbeat for {elapsed:.1f}s")
-                self._bus.publish(AgentEvent(
-                    type="execution_stalled",
-                    source="watchdog",
-                    payload={"elapsed_seconds": elapsed, "timeout": self._timeout},
-                    severity="warning"
-                ))
+                if self._on_stall_callback:
+                    try:
+                        self._on_stall_callback()
+                    except Exception as e:
+                        logger.error(f"Error in stall callback: {e}")
 
 # Global watchdog instance
 _watchdog = None
