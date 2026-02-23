@@ -5,7 +5,7 @@ from extensions.attention_alert.event_bus import get_global_bus
 from extensions.attention_alert.models import AgentEvent
 from extensions.attention_alert import init
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, filename='smoke_test.log', filemode='w')
 
 def run_smoke_test():
     print("Initializing Attention Alert Extention...")

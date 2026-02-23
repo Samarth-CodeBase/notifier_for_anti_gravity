@@ -14,7 +14,7 @@ attention_alert:
   escalation:
     - delay_seconds: 0
       backend: audio
-    - delay_seconds: 30
+    - delay_seconds: 0
       backend: desktop
     - delay_seconds: 120
       backend: webhook

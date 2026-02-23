@@ -14,7 +14,7 @@ DEFAULT_CONFIG = {
     },
     "escalation": [
         {"delay_seconds": 0, "backend": "audio"},
-        {"delay_seconds": 30, "backend": "desktop"},
+        {"delay_seconds": 0, "backend": "desktop"},
         {"delay_seconds": 120, "backend": "webhook"},
         {"delay_seconds": 600, "action": "auto_pause"}
     ],
