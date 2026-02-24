@@ -17,28 +17,28 @@ class AudioBackend(AlertBackend):
     def dispatch(self, title: str, message: str) -> bool:
         if not self._enabled:
             return False
-            
-        threading.Thread(target=self._play_sound, daemon=True).start()
-        return True
 
-    def _play_sound(self):
+        return self._play_sound()
+
+    def _play_sound(self) -> bool:
         """Play sound based on the operating system."""
         try:
             sys_platform = platform.system()
             if sys_platform == "Windows":
                 import winsound
-                # Play the default Windows notification sound asynchronously
-                winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
+                # SND_ASYNC: non-blocking at OS level but stays in-process
+                winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS | winsound.SND_ASYNC)
+                logger.info("Audio alert dispatched (SystemExclamation)")
+                return True
 
             elif sys_platform == "Darwin":
-                # macOS default alert sound
                 os.system("afplay /System/Library/Sounds/Glass.aiff")
+                return True
 
             else:
-                # Assuming Linux Desktop
-                # paplay is for PulseAudio, aplay for ALSA
                 if os.system("paplay /usr/share/sounds/freedesktop/stereo/complete.oga > /dev/null 2>&1") != 0:
-                    # Fallback to beep if paplay fails or isn't installed
                     os.system("beep > /dev/null 2>&1")
+                return True
         except Exception as e:
             logger.error(f"Failed to play audio alert: {e}")
+            return False

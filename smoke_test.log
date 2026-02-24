@@ -1,0 +1,16 @@
+INFO:extensions.attention_alert.subprocess_patch:Applied global subprocess.Popen patch for stall detection.
+DEBUG:extensions.attention_alert.watchdog:Watchdog started (timeout: 30s)
+INFO:extensions.attention_alert.attention_observer:Attention Observer started.
+INFO:extensions.attention_alert:Attention Alert extension v1.0.0 initialized.
+DEBUG:extensions.attention_alert.deduplicator:Allowed alert for WAITING_FOR_CONFIRMATION (time since last: 967362.6s)
+INFO:extensions.attention_alert.attention_observer:Attention required! Routing alert for state: WAITING_FOR_CONFIRMATION
+DEBUG:extensions.attention_alert.backends.desktop:Spawning tkinter toast with cmd: ['C:\\Users\\Saksham\\AppData\\Local\\Programs\\Python\\Python312\\pythonw.exe', 'C:\\Users\\Saksham\\AppData\\Local\\Temp\\ag_toast_4uvqw_jx.pyw']
+DEBUG:extensions.attention_alert.backends.desktop:Successfully spawned tkinter toast with PID: 18732
+DEBUG:extensions.attention_alert.deduplicator:Suppressed duplicate alert for WAITING_FOR_CONFIRMATION (cooldown: 2.1s < 10s)
+DEBUG:extensions.attention_alert.attention_observer:Agent recovered to RUNNING. Resolving blocks.
+DEBUG:extensions.attention_alert.alert_router:Cancelled all pending escalation timers.
+DEBUG:extensions.attention_alert.deduplicator:Reset cooldown for WAITING_FOR_CONFIRMATION
+DEBUG:extensions.attention_alert.deduplicator:Allowed alert for WAITING_FOR_CONFIRMATION (time since last: 967366.6s)
+INFO:extensions.attention_alert.attention_observer:Attention required! Routing alert for state: WAITING_FOR_CONFIRMATION
+DEBUG:extensions.attention_alert.backends.desktop:Spawning tkinter toast with cmd: ['C:\\Users\\Saksham\\AppData\\Local\\Programs\\Python\\Python312\\pythonw.exe', 'C:\\Users\\Saksham\\AppData\\Local\\Temp\\ag_toast_1yt6zk75.pyw']
+DEBUG:extensions.attention_alert.backends.desktop:Successfully spawned tkinter toast with PID: 3972
