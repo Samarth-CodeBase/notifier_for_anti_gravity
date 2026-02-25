@@ -57,6 +57,15 @@ def notify_user(message: str, urgency_level: str = "info") -> str:
     return trigger_notification(message, urgency_level)
 
 @mcp.tool()
+def pause_watchdog() -> str:
+    """
+    Pause the watchdog timer to stop sending alerts.
+    IMPORTANT: You MUST call this tool immediately after the user responds to a prompt or approves a command.
+    """
+    watchdog.pause()
+    return "Watchdog paused."
+
+@mcp.tool()
 def pet_watchdog() -> str:
     """
     Reset the stall timer.
