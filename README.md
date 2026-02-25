@@ -31,30 +31,50 @@ cd notifier_for_anti_gravity
 pip install -r requirements.txt
 ```
 
-### Setup for AntiGravity
-Add the following to your AntiGravity configuration to enable the extension:
+## 🛠️ Setup for AntiGravity
 
-```yaml
-extensions:
-  - path: ./extensions/attention_alert
-    enabled: true
+To use this extension, you need to configure your MCP client (like VS Code or Claude Desktop) to start the Python server.
+
+Add the following to your `mcp_config.json` (or equivalent client config):
+
+```json
+{
+  "mcpServers": {
+    "attention-alert-mcp": {
+      "command": "python",
+      "args": ["-m", "extensions.attention_alert.server"],
+      "env": {
+        "PYTHONPATH": "PATH/TO/notifier_for_anti_gravity"
+      }
+    }
+  }
+}
 ```
 
-## 🎮 Usage
+## 🎮 Usage & Tools
 
-Once integrated, the agent has access to the following tools:
+Once integrated, the AI agent has access to these three tools:
 
-### `notify_user(message, urgency_level)`
-Explicitly sends a notification.
-- **message**: The text to display.
-- **urgency_level**: `info`, `warning`, `critical`.
+1. **`notify_user(message, urgency_level)`**
+   Explicitly sends an immediate alert to the user. (e.g. asking a question). This tool automatically acts as a heartbeat.
 
-### `pet_watchdog()`
-Resets the stall timer. The agent should call this regularly during successful multi-step executions.
+2. **`pet_watchdog()`**
+   Resets the execution timer and activates the watchdog.
+   **Critical Pattern**: The agent MUST call this *right before* proposing a command that requires human approval, locking the watchdog into an active monitoring state.
+
+3. **`pause_watchdog()`**
+   Stops the watchdog from firing further alerts.
+   **Critical Pattern**: The agent MUST call this *immediately after* the user replies or approves the command to stop the alarms.
+
+### ⏰ How the Watchdog Behaves
+
+- **Starts Paused**: Doesn't nag you during idle time.
+- **Activates on Heartbeat**: Calling any tool wakes it up.
+- **Repeating Alarms**: If the agent goes silent for `stall_timeout_seconds` (default 5s), it fires the *first* alert. If the user still doesn't respond, it repeats every `repeat_interval_seconds` (default 60s) until the user interacts.
 
 ## ⚙️ Configuration
 
-Copy `config.yaml.example` to `config.yaml` and customize your settings:
+Copy `config.yaml.example` to `config.yaml` to customize your system:
 
 ```yaml
 stall_timeout_seconds: 300  # Alert if silent for 5 minutes
