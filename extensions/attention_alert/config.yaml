@@ -1,0 +1,11 @@
+attention_alert:
+  enabled: true
+  cooldown_seconds: 10
+  stall_timeout_seconds: 5
+  backends:
+    audio:
+      enabled: true
+    desktop:
+      enabled: true
+    webhook:
+      enabled: false

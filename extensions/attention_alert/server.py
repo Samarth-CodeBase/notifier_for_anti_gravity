@@ -34,7 +34,7 @@ def on_watchdog_stalled():
     Callback triggered when the watchdog detects a stall.
     """
     logger.warning("Watchdog stall detected. Triggering alert.")
-    trigger_notification("I am waiting for your input or might be stuck.", "stalled")
+    trigger_notification("I am waiting for your input!", "stalled")
 
 # Initialize the Watchdog
 watchdog = ExecutionWatchdog(
@@ -52,7 +52,8 @@ def notify_user(message: str, urgency_level: str = "info") -> str:
         message: The alert message to display to the user.
         urgency_level: The urgency of the alert (e.g., info, warning, critical).
     """
-    watchdog.pause()
+    # Every tool call is a heartbeat — agent is alive and working
+    watchdog.heartbeat()
     return trigger_notification(message, urgency_level)
 
 @mcp.tool()
@@ -61,7 +62,6 @@ def pet_watchdog() -> str:
     Reset the stall timer.
     Call this tool regularly during long-running tasks to signal that you are not stalled.
     """
-    watchdog.resume()
     watchdog.heartbeat()
     return "Watchdog timer reset."
 
